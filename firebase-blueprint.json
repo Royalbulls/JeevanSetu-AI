@@ -1,0 +1,179 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Voluntary health profile, contact info and role assignment",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "fullName": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": "string" },
+        "bloodGroup": { "type": "string" },
+        "allergies": { "type": "string" },
+        "chronicIllnesses": { "type": "string" },
+        "emergencyContactName": { "type": "string" },
+        "emergencyContactPhone": { "type": "string" },
+        "isDonor": { "type": "boolean" },
+        "role": { "type": "string", "enum": ["Citizen", "Volunteer", "Police", "Hospital", "Blood Bank", "Doctor", "NGO", "Admin", "Super Admin"] },
+        "isVerifiedDonor": { "type": "boolean" },
+        "donorVerificationStatus": { "type": "string", "enum": ["NONE", "PENDING", "VERIFIED", "REJECTED"] },
+        "hospitalVerificationStatus": { "type": "string", "enum": ["NONE", "PENDING", "VERIFIED", "REJECTED"] }
+      },
+      "required": ["uid", "fullName", "email"]
+    },
+    "LostFoundReport": {
+      "title": "LostFoundReport",
+      "description": "Lost or found report tracking for people, documents, and valuables",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "type": { "type": "string", "enum": ["LOST", "FOUND"] },
+        "category": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "photoUrl": { "type": "string" },
+        "dateTime": { "type": "string" },
+        "lastSeenLocation": { "type": "string" },
+        "state": { "type": "string" },
+        "district": { "type": "string" },
+        "city": { "type": "string" },
+        "contactName": { "type": "string" },
+        "contactPhone": { "type": "string" },
+        "contactEmail": { "type": "string" },
+        "reward": { "type": "string" },
+        "safeCustodyDetails": { "type": "string" },
+        "firNumber": { "type": "string" },
+        "firPoliceStation": { "type": "string" },
+        "nearestPoliceStation": { "type": "string" },
+        "createdBy": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "isOtpVerified": { "type": "boolean" },
+        "status": { "type": "string", "enum": ["ACTIVE", "MATCHED", "FLAGGED_FAKE", "DELETED"] }
+      },
+      "required": ["type", "category", "title", "description", "city", "createdBy"]
+    },
+    "BloodRequest": {
+      "title": "BloodRequest",
+      "description": "Urgent request for blood supply by a hospital or user",
+      "type": "object",
+      "properties": {
+        "patientName": { "type": "string" },
+        "bloodGroup": { "type": "string" },
+        "unitsRequired": { "type": "number" },
+        "hospitalName": { "type": "string" },
+        "hospitalAddress": { "type": "string" },
+        "city": { "type": "string" },
+        "contactNumber": { "type": "string" },
+        "requiredDate": { "type": "string" },
+        "reason": { "type": "string" },
+        "status": { "type": "string", "enum": ["URGENT", "PENDING", "FULFILLED"] },
+        "createdAt": { "type": "string" },
+        "createdBy": { "type": "string" }
+      },
+      "required": ["patientName", "bloodGroup", "unitsRequired", "hospitalName", "city", "contactNumber"]
+    },
+    "Donor": {
+      "title": "Donor",
+      "description": "Public voluntary blood donor registry entry",
+      "type": "object",
+      "properties": {
+        "fullName": { "type": "string" },
+        "bloodGroup": { "type": "string" },
+        "city": { "type": "string" },
+        "phone": { "type": "string" },
+        "isAvailable": { "type": "boolean" },
+        "donorVerificationStatus": { "type": "string", "enum": ["NONE", "PENDING", "VERIFIED", "REJECTED"] },
+        "isVerifiedDonor": { "type": "boolean" }
+      },
+      "required": ["fullName", "bloodGroup", "city", "phone"]
+    },
+    "Hospital": {
+      "title": "Hospital",
+      "description": "Registered hospital facility tracking critical bed and blood assets",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "address": { "type": "string" },
+        "contact": { "type": "string" },
+        "bedsAvailable": { "type": "object" },
+        "bloodBank": { "type": "boolean" },
+        "hasAmbulance": { "type": "boolean" }
+      },
+      "required": ["name", "address", "contact"]
+    },
+    "SosAlert": {
+      "title": "SosAlert",
+      "description": "Active real-time emergency broadcast",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "userPhone": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "status": { "type": "string", "enum": ["ACTIVE", "RESOLVED"] }
+      },
+      "required": ["userId", "userName", "userPhone", "createdAt", "status"]
+    },
+    "Campaign": {
+      "title": "Campaign",
+      "description": "Crowdfunding campaign for critical medical treatments",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "raisedAmount": { "type": "number" },
+        "status": { "type": "string", "enum": ["ACTIVE", "COMPLETED"] }
+      },
+      "required": ["title", "description", "raisedAmount", "status"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Administrative audit logging trail",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "action": { "type": "string" },
+        "details": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "role": { "type": "string" }
+      },
+      "required": ["userId", "userEmail", "action", "timestamp"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": { "$ref": "UserProfile" },
+      "description": "Private voluntary user profiles containing health stats"
+    },
+    "lost_found/{reportId}": {
+      "schema": { "$ref": "LostFoundReport" },
+      "description": "Lost and Found reports of people, pets, documents, and valuables"
+    },
+    "blood_requests/{requestId}": {
+      "schema": { "$ref": "BloodRequest" },
+      "description": "Emergency blood donation requests"
+    },
+    "donors/{donorId}": {
+      "schema": { "$ref": "Donor" },
+      "description": "Public searchable voluntary blood donors"
+    },
+    "hospitals/{hospitalId}": {
+      "schema": { "$ref": "Hospital" },
+      "description": "Public hospital facilities and active bed mappings"
+    },
+    "sos_alerts/{alertId}": {
+      "schema": { "$ref": "SosAlert" },
+      "description": "Emergency broadcast alert signals"
+    },
+    "campaigns/{campaignId}": {
+      "schema": { "$ref": "Campaign" },
+      "description": "Medical treatment funding campaigns"
+    },
+    "audit_logs/{logId}": {
+      "schema": { "$ref": "AuditLog" },
+      "description": "System-wide administrative logs"
+    }
+  }
+}

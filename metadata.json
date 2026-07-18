@@ -1,0 +1,9 @@
+{
+  "name": "JeevanSetu AI",
+  "description": "India's AI Emergency Assistance Platform combining real-time Google Maps navigation, AI Health Assistant, blood donor coordination, and emergency SOS services.",
+  "requestFramePermissions": [
+    "geolocation",
+    "camera"
+  ],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

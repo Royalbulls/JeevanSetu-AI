@@ -1,0 +1,83 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 1. Global Safety Net: Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Reusable Authentication & Role Primitives
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == "royalbullsadvisory412@gmail.com" || 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "Admin"
+      );
+    }
+
+    function isPolice() {
+      return isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "Police";
+    }
+
+    // 2. Users Profiles Collection Rules (PII Isolation Enforced)
+    match /users/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+
+    // 3. Registered Donors Collection Rules (Publicly searchable registry)
+    match /donors/{donorId} {
+      allow read: if true;
+      allow write: if isOwner(donorId) || isAdmin();
+    }
+
+    // 4. Hospitals Collection Rules (Public bed and facility finder)
+    match /hospitals/{hospitalId} {
+      allow read: if true;
+      allow write: if isSignedIn() || isAdmin();
+    }
+
+    // 5. SOS Alerts Collection Rules (Crucial for live rescue tracking)
+    match /sos_alerts/{alertId} {
+      allow read, write: if true;
+    }
+
+    // 6. Medical Knowledge Collection Rules
+    match /medical_knowledge/{articleId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // 7. Blood Requests Collection Rules
+    match /blood_requests/{requestId} {
+      allow read, create: if true;
+      allow update, delete: if isSignedIn() || isAdmin();
+    }
+
+    // 8. Campaigns Collection Rules (Anyone can view, donate, or list)
+    match /campaigns/{campaignId} {
+      allow read, create: if true;
+      allow update: if true; // Allows donating to increment raisedAmount
+      allow delete: if isSignedIn() || isAdmin();
+    }
+
+    // 9. Audit Logs Collection Rules (Restricted to Administrators only)
+    match /audit_logs/{logId} {
+      allow create: if true;
+      allow read: if isAdmin();
+    }
+
+    // 10. Lost and Found Collection Rules
+    match /lost_found/{reportId} {
+      allow read, create: if true;
+      allow update, delete: if isSignedIn() || isAdmin() || isPolice();
+    }
+  }
+}
